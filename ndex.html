@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile App Design Practicals</title>
+    <style>
+        :root {
+            --primary: #3498db;
+            --secondary: #2c3e50;
+            --accent: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #34495e;
+            --success: #2ecc71;
+            --warning: #f39c12;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 2rem 0;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: white;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .tagline {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .designs-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .design-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .design-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+        
+        .card-header {
+            background: var(--secondary);
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+        
+        .mobile-preview {
+            background: #2c3e50;
+            border-radius: 20px;
+            padding: 20px 10px;
+            width: 280px;
+            height: 500px;
+            margin: 1rem auto;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .mobile-screen {
+            background: white;
+            border-radius: 10px;
+            height: 100%;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .mobile-notch {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 20px;
+            background: #2c3e50;
+            border-radius: 0 0 10px 10px;
+            z-index: 10;
+        }
+        
+        .loader-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 5;
+            transition: opacity 0.5s ease;
+        }
+        
+        .loader-container.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .loader-logo {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 2rem;
+            border-radius: 20px;
+        }
+        
+        .loader-text {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+        
+        .loader-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .app-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        
+        .app-content.visible {
+            opacity: 1;
+        }
+        
+        .top-bar {
+            background: var(--primary);
+            color: white;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .app-title {
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .top-icons {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .top-icon, .nav-icon {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .top-icon:hover, .nav-icon:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .content-area {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .page-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--secondary);
+        }
+        
+        .page-content {
+            color: #666;
+        }
+        
+        .bottom-nav {
+            background: var(--primary);
+            display: flex;
+            justify-content: space-around;
+            padding: 0.5rem 0;
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            padding: 0.3rem;
+            border-radius: 8px;
+            transition: background 0.3s ease;
+            flex: 1;
+            max-width: 60px;
+        }
+        
+        .nav-item.active {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .nav-icon {
+            font-size: 1.2rem;
+            margin-bottom: 0.2rem;
+        }
+        
+        .nav-label {
+            font-size: 0.7rem;
+        }
+        
+        .card-footer {
+            padding: 1rem;
+            text-align: center;
+            background: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .view-code-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s ease;
+        }
+        
+        .view-code-btn:hover {
+            background: #2980b9;
+        }
+        
+        .code-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        
+        .code-modal.visible {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .modal-header {
+            background: var(--secondary);
+            color: white;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        .modal-body {
+            padding: 1rem;
+            overflow-y: auto;
+            flex: 1;
+        }
+        
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 1rem;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            line-height: 1.5;
+        }
+        
+        @media (max-width: 768px) {
+            .designs-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .mobile-preview {
+                width: 250px;
+                height: 450px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Mobile App Design Practicals</h1>
+            <p class="tagline">5 different app designs with logo loaders and icon navigation</p>
+        </header>
+        
+        <div class="designs-container">
+            <!-- Design 1: Modern Business App -->
+            <div class="design-card">
+                <div class="card-header">
+                    <h3>Design 1: Modern Business</h3>
+                </div>
+                
+                <div class="mobile-preview">
+                    <div class="mobile-notch"></div>
+                    
+                    <!-- Loader -->
+                    <div class="loader-container" id="loader-1">
+                        <div class="loader-logo" style="background: #3498db; color: white;">MB</div>
+                        <div class="loader-text">Modern Business</div>
+                        <div class="loader-spinner"></div>
+                    </div>
+                    
+                    <!-- App Content -->
+                    <div class="app-content" id="app-content-1">
+                        <div class="top-bar">
+                            <div class="app-title">Modern Business</div>
+                            <div class="top-icons">
+                                <div class="top-icon">🔔</div>
+                                <div class="top-icon">👤</div>
+                            </div>
+                        </div>
+                        
+                        <div class="content-area">
+                            <div class="page-title" id="page-title-1">Home</div>
+                            <div class="page-content" id="page-content-1">
+                                Welcome to Modern Business App. Manage your business on the go.
+                            </div>
+                        </div>
+                        
+                        <div class="bottom-nav">
+                            <div class="nav-item active" onclick="changePage(1, 'home')">
+                                <div class="nav-icon">🏠</div>
+                                <div class="nav-label">Home</div>
+                            </div>
+                            <div class="nav-item" onclick="changePage(1, 'tasks')">
+                                <div class="nav-icon">✅</div>
+                                <div class="nav-label">Tasks</div>
+                            </div>
+                            <div class="nav-item" onclick="changePage(1, 'analytics')">
+                                <div class="nav-icon">📊</div>
+                                <div class="nav-label">Analytics</div>
+                            </div>
+                            <div class="nav-item" onclick="changePage(1, 'profile')">
+                                <div class="nav-icon">👤</div>
+                                <div class="nav-label">Profile</div>
+                            </div>
+                            <div class="nav-item" onclick="changePage(1, 'settings')">
+                                <div class="nav-icon">⚙️</div>
+                                <div class="nav-label">Settings</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-footer">
+                    <button class="view-code-btn" onclick="showCode(1)">View Code</button>
+                </div>
+            </div>
+            
+            <!-- Design 2: Health & Fitness App -->
+            <div class="design-card">
+                <div class="card-header">
+                    <h3>Design 2: Health & Fitness</h3>
+                </div>
+                
+                <div class="mobile-preview">
+                    <div class="mobile-notch"></div>
+                    
+                    <!-- Loader -->
+                    <div class="loader-container" id="loader-2">
+                        <div class="loader-logo" style="background: #e74c3c; color: white;">❤️</div>
+                        <div class="loader-text">Health Tracker</div>
+                        <div class="loader-spinner" style="border-top-color: #e74c3c;"></div>
+                    </div>
+                    
+                    <!-- App Content -->
+                    <div class="app-content" id="app-content-2">
+                        <div class="top-bar" style="background: #e74c3c;">
+                            <div class="app-title">Health Tracker</div>
+                            <div class="top-icons">
+                                <div class="top-icon">🏆</div>
+                                <div class="top-icon">📈</div>
+                            </div>
+                        </div>
+                        
+                        <div class="content-area">
+                            <div class="page-title" id="page-title-2">Dashboard</div>
+                            <div class="page-content" id="page-content-2">
+                                Track your workouts, nutrition, and health metrics.
+                            </div>
+                        </div>
+                        
+                        <div class="bottom-nav" style="background: #e74c3c;">
+                            <div class="nav-item active" onclick="changePage(2, 'home')">
+                                <div class="nav-icon">📊</div>
+                                <div class="nav-label">Dashboard</div>
+                            </div>
+                            <div class="nav-item" onclick="changePage(2, 'workouts')">
+                                <div class="nav-icon">💪</div>
+                                <div class="nav-label">Workouts</div>
+                            </div>
+                            <div class="nav-item" onclick="changePage(2, 'nutrition')">
+                                <div class="nav-icon">🥗</div>
+                                <div class="nav-label">Nutrition</div>
+                            </div>
+                            <div class="nav-item" onclick="changePage(2, 'progress')">
+                                <div class="nav-icon">📈</div>
+                                <div class="nav-label">Progress</div>
+                            </div>
+                            <div class="nav-item" onclick="changePage(2, 'profile')">
+                                <div class="nav-icon">👤</div>
+                                <div class="nav-label">Profile</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-footer">
+                    <button class="view-code-btn" onclick="showCode(2)">View Code</button>
+                </div>
+            </div>
+            
+            <!-- Design 3: Social Media App -->
+            <div class="design-card">
+                <div class="card-header">
+                    <h3>Design 3: Social Media</h3>
+                </div>
+                
+                <div class="mobile-preview">
+                    <div class="mobile-notch"></div>
+                    
+                    <!-- Loader -->
+                    <div class="loader-container" id="loader-3">
+                        <div class="loader-logo" style="background: #9b59b6; color: white;">💬</div>
+                        <div class="loader-text">SocialConnect</div>
+                        <div class="loader-spinner" style="border-top-color: #9b59b6;"></div>
+                    </div>
+                    
+                    <!-- App Content -->
+                    <div class="app-content" id="app-content-3">
+                        <div class="top-bar" style="background: #9b59b6;">
+                            <div class="app-title">SocialConnect</div>
+                            <div class="top-icons">
+                                <div class="top-icon">✉️</div>
+                                <div class="top-icon">🔍</div>
+                            </div>
+                        </div>
+                        
+                        <div class="content-area">
+                            <div class="page-title" id="page-title-3">Feed</div>
+                            <div class="page-content" id="page-content-3">
+                                Connect with friends and share your moments.
+                            </div>
+                        </div>
+                        
+                        <div class="bottom-nav" style="background: #9b59b6;">
+                            <div class="nav-item active" onclick="changePage(3, 'home')">
+                                <div class="nav-icon">🏠</div>
+                                <div class="nav-label">Feed</div>
+                            </div>
+                            <div class="nav-item" onclick="changePage(3, 'explore')">
+                                <div class="nav-icon">🔍</div>
+                                <div class="nav-label">Explore</div>
+                            </div>
+                            <div class="nav-item" onclick="changePage(3, 'messages')">
+                                <div class="nav-icon">💬</div>
+                                <div class="nav-label">Messages</div>
+                            </div>
+                            <div class="nav-item" onclick="changePage(3, 'notifications')">
+                                <div class="nav-icon">🔔</div>
+                                <div class="nav-label">Alerts</div>
+                            </div>
+                            <div class="nav-item" onclick="changePage(3, 'profile')">
+                                <div class="nav-icon">👤</div>
+                                <div class="nav-label">Profile</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-footer">
+                    <button class="view-code-btn" onclick="showCode(3)">View Code</button>
+                </div>
+            </div>
+            
+            <!-- Design 4: Finance App -->
+            <div class="design-card">
+                <div class="card-header">
+                    <h3>Design 4: Finance Tracker</h3>
+                </div>
+                
+                <div class="mobile-preview">
+                    <div class="mobile-notch"></div>
+                    
+                    <!-- Loader -->
+                    <div class="loader-container" id="loader-4">
+                        <div class="loader-logo" style="background: #2ecc71; color: white;">💰</div>
+                        <div class="loader-text">FinancePro</div>
+                        <div class="loader-spinner" style="border-top-color: #2ecc71;"></div>
+                    </div>
+                    
+                    <!-- App Content -->
+                    <div class="app-content" id="app-content-4">
+                        <div class="top-bar" style="background: #2ecc71;">
+                            <div class="app-title">FinancePro</div>
+                            <div class="top-icons">
+                                <div class="top-icon">➕</div>
+                                <div class="top-icon">📊</div>
+                            </div>
+                        </div>
+                        
+                        <div class="content-area">
+                            <div class="page-title" id="page-title-4">Overview</div>
+                            <div class="page-content" id="page-content-4">
+                                Track your expenses, budgets, and investments.
+                            </div>
+                        </div>
+                        
+                        <div class="bottom-nav" style="background: #2ecc71;">
+                            <div class="nav-item active" onclick="changePage(4, 'home')">
+                                <div class="nav-icon">📈</div>
+                                <div class="nav-label">Overview</div>
+                            </div>
+                            <div class="nav-item" onclick="changePage(4, 'transactions')">
+                                <div class="nav-icon">💳</div>
+                                <div class="nav-label">Transactions</div>
+                            </div>
+                            <div class="nav-item" onclick="changePage(4, 'budgets')">
+                                <div class="nav-icon">📋</div>
+                                <div class="nav-label">Budgets</div>
+                            </div>
+                            <div class="nav-item" onclick="changePage(4, 'investments')">
+                                <div class="nav-icon">📊</div>
+                                <div class="nav-label">Investments</div>
+                            </div>
+                            <div class="nav-item" onclick="changePage(4, 'profile')">
+                                <div class="nav-icon">👤</div>
+                                <div class="nav-label">Profile</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-footer">
+                    <button class="view-code-btn" onclick="showCode(4)">View Code</button>
+                </div>
+            </div>
+            
+            <!-- Design 5: Education App -->
+            <div class="design-card">
+                <div class="card-header">
+                    <h3>Design 5: Learning Platform</h3>
+                </div>
+                
+                <div class="mobile-preview">
+                    <div class="mobile-notch"></div>
+                    
+                    <!-- Loader -->
+                    <div class="loader-container" id="loader-5">
+                        <div class="loader-logo" style="background: #f39c12; color: white;">📚</div>
+                        <div class="loader-text">LearnHub</div>
+                        <div class="loader-spinner" style="border-top-color: #f39c12;"></div>
+                    </div>
+                    
+                    <!-- App Content -->
+                    <div class="app-content" id="app-content-5">
+                        <div class="top-bar" style="background: #f39c12;">
+                            <div class="app-title">LearnHub</div>
+                            <div class="top-icons">
+                                <div class="top-icon">🔔</div>
+                                <div class="top-icon">🏆</div>
+                            </div>
+                        </div>
+                        
+                        <div class="content-area">
+                            <div class="page-title" id="page-title-5">My Courses</div>
+                            <div class="page-content" id="page-content-5">
+                                Continue your learning journey with personalized courses.
+                            </div>
+                        </div>
+                        
+                        <div class="bottom-nav" style="background: #f39c12;">
+                            <div class="nav-item active" onclick="changePage(5, 'home')">
+                                <div class="nav-icon">🏠</div>
+                                <div class="nav-label">Courses</div>
+                            </div>
+                            <div class="nav-item" onclick="changePage(5, 'library')">
+                                <div class="nav-icon">📚</div>
+                                <div class="nav-label">Library</div>
+                            </div>
+                            <div class="nav-item" onclick="changePage(5, 'progress')">
+                                <div class="nav-icon">📊</div>
+                                <div class="nav-label">Progress</div>
+                            </div>
+                            <div class="nav-item" onclick="changePage(5, 'discussions')">
+                                <div class="nav-icon">💬</div>
+                                <div class="nav-label">Discussions</div>
+                            </div>
+                            <div class="nav-item" onclick="changePage(5, 'profile')">
+                                <div class="nav-icon">👤</div>
+                                <div class="nav-label">Profile</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-footer">
+                    <button class="view-code-btn" onclick="showCode(5)">View Code</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Code Modal -->
+    <div class="code-modal" id="code-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">App Code</h3>
+                <button class="close-modal" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="code-block" id="code-content">
+                    <!-- Code will be inserted here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize all apps
+        document.addEventListener('DOMContentLoaded', function() {
+            // Show loader for 3 seconds, then show app content
+            for (let i = 1; i <= 5; i++) {
+                setTimeout(() => {
+                    const loader = document.getElementById(`loader-${i}`);
+                    const appContent = document.getElementById(`app-content-${i}`);
+                    
+                    if (loader && appContent) {
+                        loader.classList.add('hidden');
+                        appContent.classList.add('visible');
+                    }
+                }, 2000 * i); // Stagger the load times for visual effect
+            }
+        });
+        
+        // Change page content when nav item is clicked
+        function changePage(designNum, page) {
+            // Update active nav item
+            const navItems = document.querySelectorAll(`#app-content-${designNum} .nav-item`);
+            navItems.forEach(item => item.classList.remove('active'));
+            
+            event.currentTarget.classList.add('active');
+            
+            // Update page content based on the page
+            const pageTitle = document.getElementById(`page-title-${designNum}`);
+            const pageContent = document.getElementById(`page-content-${designNum}`);
+            
+            const pageData = {
+                home: { 
+                    title: getHomeTitle(designNum), 
+                    content: getHomeContent(designNum) 
+                },
+                tasks: { 
+                    title: "Tasks", 
+                    content: "Manage your tasks and to-do lists." 
+                },
+                analytics: { 
+                    title: "Analytics", 
+                    content: "View your business analytics and reports." 
+                },
+                workouts: { 
+                    title: "Workouts", 
+                    content: "Browse and track your workout routines." 
+                },
+                nutrition: { 
+                    title: "Nutrition", 
+                    content: "Track your meals and nutrition goals." 
+                },
+                progress: { 
+                    title: "Progress", 
+                    content: "See your fitness progress over time." 
+                },
+                explore: { 
+                    title: "Explore", 
+                    content: "Discover new content and people." 
+                },
+                messages: { 
+                    title: "Messages", 
+                    content: "Chat with your friends and connections." 
+                },
+                notifications: { 
+                    title: "Notifications", 
+                    content: "See your latest alerts and updates." 
+                },
+                transactions: { 
+                    title: "Transactions", 
+                    content: "View your income and expense history." 
+                },
+                budgets: { 
+                    title: "Budgets", 
+                    content: "Set and track your spending budgets." 
+                },
+                investments: { 
+                    title: "Investments", 
+                    content: "Monitor your investment portfolio." 
+                },
+                library: { 
+                    title: "Library", 
+                    content: "Browse available courses and materials." 
+                },
+                discussions: { 
+                    title: "Discussions", 
+                    content: "Join learning communities and discussions." 
+                },
+                profile: { 
+                    title: "Profile", 
+                    content: "Manage your account and settings." 
+                },
+                settings: { 
+                    title: "Settings", 
+                    content: "Customize your app experience." 
+                }
+            };
+            
+            if (pageData[page]) {
+                pageTitle.textContent = pageData[page].title;
+                pageContent.textContent = pageData[page].content;
+            }
+        }
+        
+        // Helper functions for page titles and content
+        function getHomeTitle(designNum) {
+            const titles = {
+                1: "Home",
+                2: "Dashboard",
+                3: "Feed",
+                4: "Overview",
+                5: "My Courses"
+            };
+            return titles[designNum] || "Home";
+        }
+        
+        function getHomeContent(designNum) {
+            const contents = {
+                1: "Welcome to Modern Business App. Manage your business on the go.",
+                2: "Track your workouts, nutrition, and health metrics.",
+                3: "Connect with friends and share your moments.",
+                4: "Track your expenses, budgets, and investments.",
+                5: "Continue your learning journey with personalized courses."
+            };
+            return contents[designNum] || "Welcome to the app.";
+        }
+        
+        // Show code modal
+        function showCode(designNum) {
+            const modal = document.getElementById('code-modal');
+            const modalTitle = document.getElementById('modal-title');
+            const codeContent = document.getElementById('code-content');
+            
+            const designTitles = {
+                1: "Modern Business App",
+                2: "Health & Fitness App",
+                3: "Social Media App",
+                4: "Finance Tracker App",
+                5: "Learning Platform App"
+            };
+            
+            modalTitle.textContent = `${designTitles[designNum]} - HTML/CSS/JS Code`;
+            
+            // Sample code for each design
+            const codeSamples = {
+                1: `<!-- Modern Business App Structure -->
+<div class="mobile-preview">
+  <div class="loader-container">
+    <div class="loader-logo">MB</div>
+    <div class="loader-text">Modern Business</div>
+    <div class="loader-spinner"></div>
+  </div>
+  
+  <div class="app-content">
+    <div class="top-bar">
+      <div class="app-title">Modern Business</div>
+      <div class="top-icons">...</div>
+    </div>
+    
+    <div class="content-area">
+      <div class="page-title">Home</div>
+      <div class="page-content">Welcome message...</div>
+    </div>
+    
+    <div class="bottom-nav">
+      <div class="nav-item">🏠 Home</div>
+      <div class="nav-item">✅ Tasks</div>
+      <div class="nav-item">📊 Analytics</div>
+      <div class="nav-item">👤 Profile</div>
+      <div class="nav-item">⚙️ Settings</div>
+    </div>
+  </div>
+</div>
+
+/* CSS for Loader Animation */
+.loader-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// JavaScript for Page Navigation
+function changePage(designNum, page) {
+  // Update active nav item
+  const navItems = document.querySelectorAll('.nav-item');
+  navItems.forEach(item => item.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  
+  // Update page content
+  // ... implementation details
+}`,
+                2: `<!-- Health & Fitness App Structure -->
+<div class="mobile-preview">
+  <div class="loader-container">
+    <div class="loader-logo">❤️</div>
+    <div class="loader-text">Health Tracker</div>
+    <div class="loader-spinner"></div>
+  </div>
+  
+  <div class="app-content">
+    <div class="top-bar" style="background: #e74c3c;">
+      <div class="app-title">Health Tracker</div>
+      <div class="top-icons">...</div>
+    </div>
+    
+    <div class="content-area">
+      <div class="page-title">Dashboard</div>
+      <div class="page-content">Health metrics...</div>
+    </div>
+    
+    <div class="bottom-nav" style="background: #e74c3c;">
+      <div class="nav-item">📊 Dashboard</div>
+      <div class="nav-item">💪 Workouts</div>
+      <div class="nav-item">🥗 Nutrition</div>
+      <div class="nav-item">📈 Progress</div>
+      <div class="nav-item">👤 Profile</div>
+    </div>
+  </div>
+</div>
+
+/* CSS for Health App Theme */
+.health-theme {
+  --primary: #e74c3c;
+  --secondary: #c0392b;
+}
+
+.loader-spinner {
+  border-top-color: #e74c3c;
+}
+
+// JavaScript for Fitness Tracking
+function logWorkout(workoutType, duration) {
+  // Implementation for logging workouts
+  console.log(\`Logged \${workoutType} for \${duration} minutes\`);
+}`,
+                3: `<!-- Social Media App Structure -->
+<div class="mobile-preview">
+  <div class="loader-container">
+    <div class="loader-logo">💬</div>
+    <div class="loader-text">SocialConnect</div>
+    <div class="loader-spinner"></div>
+  </div>
+  
+  <div class="app-content">
+    <div class="top-bar" style="background: #9b59b6;">
+      <div class="app-title">SocialConnect</div>
+      <div class="top-icons">...</div>
+    </div>
+    
+    <div class="content-area">
+      <div class="page-title">Feed</div>
+      <div class="page-content">Social posts...</div>
+    </div>
+    
+    <div class="bottom-nav" style="background: #9b59b6;">
+      <div class="nav-item">🏠 Feed</div>
+      <div class="nav-item">🔍 Explore</div>
+      <div class="nav-item">💬 Messages</div>
+      <div class="nav-item">🔔 Alerts</div>
+      <div class="nav-item">👤 Profile</div>
+    </div>
+  </div>
+</div>
+
+/* CSS for Social App Theme */
+.social-theme {
+  --primary: #9b59b6;
+  --secondary: #8e44ad;
+}
+
+.loader-spinner {
+  border-top-color: #9b59b6;
+}
+
+// JavaScript for Social Features
+function loadFeedPosts() {
+  // Implementation for loading social feed
+  console.log("Loading latest posts...");
+}`,
+                4: `<!-- Finance Tracker App Structure -->
+<div class="mobile-preview">
+  <div class="loader-container">
+    <div class="loader-logo">💰</div>
+    <div class="loader-text">FinancePro</div>
+    <div class="loader-spinner"></div>
+  </div>
+  
+  <div class="app-content">
+    <div class="top-bar" style="background: #2ecc71;">
+      <div class="app-title">FinancePro</div>
+      <div class="top-icons">...</div>
+    </div>
+    
+    <div class="content-area">
+      <div class="page-title">Overview</div>
+      <div class="page-content">Financial summary...</div>
+    </div>
+    
+    <div class="bottom-nav" style="background: #2ecc71;">
+      <div class="nav-item">📈 Overview</div>
+      <div class="nav-item">💳 Transactions</div>
+      <div class="nav-item">📋 Budgets</div>
+      <div class="nav-item">📊 Investments</div>
+      <div class="nav-item">👤 Profile</div>
+    </div>
+  </div>
+</div>
+
+/* CSS for Finance App Theme */
+.finance-theme {
+  --primary: #2ecc71;
+  --secondary: #27ae60;
+}
+
+.loader-spinner {
+  border-top-color: #2ecc71;
+}
+
+// JavaScript for Financial Calculations
+function calculateBudget(income, expenses) {
+  return income - expenses;
+}`,
+                5: `<!-- Learning Platform App Structure -->
+<div class="mobile-preview">
+  <div class="loader-container">
+    <div class="loader-logo">📚</div>
+    <div class="loader-text">LearnHub</div>
+    <div class="loader-spinner"></div>
+  </div>
+  
+  <div class="app-content">
+    <div class="top-bar" style="background: #f39c12;">
+      <div class="app-title">LearnHub</div>
+      <div class="top-icons">...</div>
+    </div>
+    
+    <div class="content-area">
+      <div class="page-title">My Courses</div>
+      <div class="page-content">Course listings...</div>
+    </div>
+    
+    <div class="bottom-nav" style="background: #f39c12;">
+      <div class="nav-item">🏠 Courses</div>
+      <div class="nav-item">📚 Library</div>
+      <div class="nav-item">📊 Progress</div>
+      <div class="nav-item">💬 Discussions</div>
+      <div class="nav-item">👤 Profile</div>
+    </div>
+  </div>
+</div>
+
+/* CSS for Education App Theme */
+.education-theme {
+  --primary: #f39c12;
+  --secondary: #d35400;
+}
+
+.loader-spinner {
+  border-top-color: #f39c12;
+}
+
+// JavaScript for Course Management
+function enrollInCourse(courseId) {
+  // Implementation for course enrollment
+  console.log(\`Enrolled in course: \${courseId}\`);
+}`
+            };
+            
+            codeContent.textContent = codeSamples[designNum] || "Code sample not available.";
+            modal.classList.add('visible');
+        }
+        
+        // Close modal
+        function closeModal() {
+            document.getElementById('code-modal').classList.remove('visible');
+        }
+    </script>
+</body>
+</html>
